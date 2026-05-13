@@ -10,7 +10,7 @@ const Home = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/posts');
+        const res = await axios.get('https://blogplatform-2r1b.onrender.com/api/posts');
         setPosts(res.data);
       } catch (err) {
         setError('Failed to fetch posts');
@@ -31,7 +31,7 @@ const Home = () => {
         {posts.map(post => (
           <div key={post._id} className="border p-4 rounded">
             {post.image && (
-              <img src={`http://localhost:5000${post.image}`} alt={post.title} className="w-full h-48 object-cover mb-4 rounded" />
+              <img src={`https://blogplatform-2r1b.onrender.com${post.image}`} alt={post.title} className="w-full h-48 object-cover mb-4 rounded" />
             )}
             <h2 className="text-xl font-semibold">
               <Link to={`/post/${post._id}`} className="text-blue-500 hover:underline">
