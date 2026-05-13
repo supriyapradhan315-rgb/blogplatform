@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { API_URL } from '../api';
 
 const Dashboard = () => {
   const [posts, setPosts] = useState([]);
@@ -16,7 +17,7 @@ const Dashboard = () => {
     }
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/posts', {
+        const res = await axios.get(`${API_URL}/posts`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPosts(res.data);
@@ -32,7 +33,7 @@ const Dashboard = () => {
   const handleDelete = async (id) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${id}`, {
+      await axios.delete(`${API_URL}/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setPosts(posts.filter(p => p._id !== id));

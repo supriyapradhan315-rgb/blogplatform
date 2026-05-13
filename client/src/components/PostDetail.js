@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
-const API_URL = process.env.REACT_APP_API_URL || 'https://blogplatform-2r1b.onrender.com/api';
+import { API_BASE_URL, API_URL } from '../api';
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -74,7 +73,7 @@ const PostDetail = () => {
       <p className="text-gray-600 mb-2">By {post.author.username}</p>
       <p className="text-sm text-gray-500 mb-6">{new Date(post.createdAt).toLocaleDateString()}</p>
       {post.image && (
-        <img src={`${API_URL}${post.image}`} alt={post.title} className="w-full max-w-2xl h-auto mb-6 rounded" />
+        <img src={`${API_BASE_URL}${post.image}`} alt={post.title} className="w-full max-w-2xl h-auto mb-6 rounded" />
       )}
       <div className="mb-8">{post.content}</div>
 

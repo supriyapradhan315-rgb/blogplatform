@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_URL } from '../api';
 
 const EditPost = () => {
   const { id } = useParams();
@@ -19,7 +20,7 @@ const EditPost = () => {
         return;
       }
       try {
-        const res = await axios.get(`http://localhost:5000/api/posts/${id}`, {
+        const res = await axios.get(`${API_URL}/posts/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setFormData({ title: res.data.title, content: res.data.content });
@@ -37,7 +38,7 @@ const EditPost = () => {
     const token = localStorage.getItem('token');
     setLoading(true);
     try {
-      await axios.put(`http://localhost:5000/api/posts/${id}`, { title, content }, {
+      await axios.put(`${API_URL}/posts/${id}`, { title, content }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       navigate('/dashboard');

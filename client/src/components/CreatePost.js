@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../api';
 
 const CreatePost = () => {
   const [formData, setFormData] = useState({ title: '', content: '' });
@@ -30,10 +31,9 @@ const CreatePost = () => {
       if (image) {
         formDataToSend.append('image', image);
       }
-      await axios.post('http://localhost:5000/api/posts', formDataToSend, {
+      await axios.post(`${API_URL}/posts`, formDataToSend, {
         headers: { 
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
+          Authorization: `Bearer ${token}`
         }
       });
       navigate('/dashboard');
