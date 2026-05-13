@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL || 'https://blogplatform-2r1b.onrender.com/api';
+
 const PostDetail = () => {
   const { id } = useParams();
   const [post, setPost] = useState(null);
@@ -9,27 +11,27 @@ const PostDetail = () => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [commentError, setCommentError] = useState('');
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/posts/${id}`);
-        setPost(res.data);
+        const postRes = await axios.get(`${API_URL}/posts/${id}`);
+        setPost(postRes.data);
       } catch (err) {
         setError('Failed to fetch post');
       }
-    };
-    const fetchComments = async () => {
+
       try {
-        const res = await axios.get(`http://localhost:5000/api/comments/${id}`);
-        setComments(res.data);
+        const commentsRes = await axios.get(`${API_URL}/comments/${id}`);
+        setComments(commentsRes.data);
       } catch (err) {
-        setError('Failed to fetch comments');
+        setCommentError('Failed to fetch comments');
       }
+
+      setLoading(false);
     };
-    fetchPost();
-    fetchComments();
-    setLoading(false);
+    fetchData();
   }, [id]);
 
   const handleCommentSubmit = async (e) => {
@@ -40,7 +42,7 @@ const PostDetail = () => {
       return;
     }
     try {
-      const res = await axios.post(`http://localhost:5000/api/comments/${id}`, { text: newComment }, {
+      const res = await axios.post(`${API_URL}/comments/${id}`, { text: newComment }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComments([res.data, ...comments]);
@@ -53,7 +55,7 @@ const PostDetail = () => {
   const handleDeleteComment = async (commentId) => {
     const token = localStorage.getItem('token');
     try {
-      await axios.delete(`http://localhost:5000/api/comments/${commentId}`, {
+      await axios.delete(`${API_URL}/comments/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComments(comments.filter(c => c._id !== commentId));
@@ -72,11 +74,12 @@ const PostDetail = () => {
       <p className="text-gray-600 mb-2">By {post.author.username}</p>
       <p className="text-sm text-gray-500 mb-6">{new Date(post.createdAt).toLocaleDateString()}</p>
       {post.image && (
-        <img src={`http://localhost:5000${post.image}`} alt={post.title} className="w-full max-w-2xl h-auto mb-6 rounded" />
+        <img src={`${API_URL}${post.image}`} alt={post.title} className="w-full max-w-2xl h-auto mb-6 rounded" />
       )}
       <div className="mb-8">{post.content}</div>
 
       <h2 className="text-2xl font-bold mb-4">Comments</h2>
+      {commentError && <div className="text-red-500 mb-4">{commentError}</div>}
       <form onSubmit={handleCommentSubmit} className="mb-6">
         <textarea
           value={newComment}
