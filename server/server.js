@@ -24,21 +24,31 @@ const upload = multer({ storage });
 
 app.use('/uploads', express.static('uploads'));
 
-mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 30000, // Keep trying to send operations for 30 seconds
-  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-})
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/blogplatform', {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: 10,
+      minPoolSize: 2,
+    });
+    console.log("MongoDB connected");
 
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/posts', require('./routes/posts'));
-app.use('/api/comments', require('./routes/comments'));
+    app.use('/api/auth', require('./routes/auth'));
+    app.use('/api/posts', require('./routes/posts'));
+    app.use('/api/comments', require('./routes/comments'));
 
-app.get("/", (req, res) => {
-  res.send("API Running");
-});
+    app.get("/", (req, res) => {
+      res.send("API Running");
+    });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
+    app.listen(5000, '0.0.0.0', () => {
+      console.log("Server running on port 5000");
+    });
+  } catch (err) {
+    console.error("Failed to connect to MongoDB:", err.message);
+    process.exit(1);
+  }
+};
+
+startServer();
